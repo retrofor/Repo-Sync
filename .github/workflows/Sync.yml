@@ -16,11 +16,33 @@ jobs:
       - name: Checkout files
         uses: actions/checkout@v2
         with:
-          repository: ${{ matrix.repo }}
+          repository: retrofor/Dice #${{ matrix.repo }}
           token: ${{ secrets.PAT }}
-      - name: Sync files with dst-octocat-repsotiory!
+      - name: Sync files with Dice!
         uses: denis-tingajkin/sync-files@main
         with:
-          git-author-email: 'octocat@github.com'
-          git-author-name: 'Octocat'
-          src-repository: ${{ matrix.src_repo }}
+          git-author-email: 'admin@jyunko.cn'
+          git-author-name: 'HsiangNianian'
+          src-repository: Dice-Developer-Team/Dice #${{ matrix.src_repo }}
+      - name: Checkout files
+        uses: actions/checkout@v2
+        with:
+          repository: retrofor/OlivOS #${{ matrix.repo }}
+          token: ${{ secrets.PAT }}
+      - name: Sync files with OlivOS!
+        uses: denis-tingajkin/sync-files@main
+        with:
+          git-author-email: 'admin@jyunko.cn'
+          git-author-name: 'HsiangNianian'
+          src-repository: OlivOS-Team/OlivOS #${{ matrix.src_repo }}
+      - name: Checkout files
+        uses: actions/checkout@v2
+        with:
+          repository: retrofor/virtual-event-starter-kit1 #${{ matrix.repo }}
+          token: ${{ secrets.PAT }}
+      - name: Sync files with virtual-event-starter-kit1!
+        uses: denis-tingajkin/sync-files@main
+        with:
+          git-author-email: 'admin@jyunko.cn'
+          git-author-name: 'HsiangNianian'
+          src-repository: HsiangNianian/virtual-event-starter-kit1 #${{ matrix.src_repo }}
