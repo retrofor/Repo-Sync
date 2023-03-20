@@ -20,11 +20,7 @@ jobs:
           target_branch: main
           force: true
           tags: true
-          
-  OlivOS:
-    runs-on: ubuntu-latest
-    steps:
-      - name: virtual-event-starter-kit1
+      - name: OlivOS
       - uses: TobKed/github-forks-sync-action@master
         with:
           github_token: ${{ secrets.PAT }}
@@ -34,18 +30,14 @@ jobs:
           target_branch: main
           force: true
           tags: true
-          
-  Dice:
-      runs-on: ubuntu-latest
-      steps:
-        - name: virtual-event-starter-kit1
-        - uses: TobKed/github-forks-sync-action@master
-          with:
-            github_token: ${{ secrets.PAT }}
-            upstream_repository: Dice-Developer-Team/Dice
-            target_repository: retrofor/Dice
-            upstream_branch: main
-            target_branch: main
-            force: true
-            tags: true
+      - name: Dice
+      - uses: TobKed/github-forks-sync-action@master
+        with:
+          github_token: ${{ secrets.PAT }}
+          upstream_repository: Dice-Developer-Team/Dice
+          target_repository: retrofor/Dice
+          upstream_branch: main
+          target_branch: main
+          force: true
+          tags: true
 
