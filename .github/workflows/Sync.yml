@@ -11,7 +11,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: virtual-event-starter-kit1
-      - uses: TobKed/github-forks-sync-action@master
+        uses: TobKed/github-forks-sync-action@master
         with:
           github_token: ${{ secrets.PAT }}
           upstream_repository: HsiangNianian/virtual-event-starter-kit1
@@ -21,7 +21,7 @@ jobs:
           force: true
           tags: true
       - name: OlivOS
-      - uses: TobKed/github-forks-sync-action@master
+        uses: TobKed/github-forks-sync-action@master
         with:
           github_token: ${{ secrets.PAT }}
           upstream_repository: OlivOS-Team/OlivOS
@@ -31,7 +31,7 @@ jobs:
           force: true
           tags: true
       - name: Dice
-      - uses: TobKed/github-forks-sync-action@master
+        uses: TobKed/github-forks-sync-action@master
         with:
           github_token: ${{ secrets.PAT }}
           upstream_repository: Dice-Developer-Team/Dice
