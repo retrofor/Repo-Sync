@@ -15,18 +15,14 @@ jobs:
 
       - name: Set up Git user
         run: |
-          git config --global user.name "HsiangNianian"
-          git config --global user.email "admin@jyunko.cn"
+          git config --global user.name "Repo-Sync-bot"
+          git config --global user.email "actions@users.noreply.github.com"
 
       - name: Sync Forks
         env:
           PAT: ${{ secrets.PAT }}
         run: |
-          git config --global user.name "HsiangNianian"
-          git config --global user.email "admin@jyunko.cn"
-
           set -e
-
           org_name=retrofor
           fork_repos="OlivOS Dice virtual-event-starter-kit1"
           for repo in $fork_repos; do
@@ -57,7 +53,6 @@ jobs:
                     \"title\": \"$issue_title\",
                     \"body\": \"$issue_body\"
                 }"
-                
               fi
             done
             
