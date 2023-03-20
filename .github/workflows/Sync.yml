@@ -22,10 +22,10 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.ACTION_SECRET }}
         run: |
-          org_name=<your-org-name>
+          org_name=retrofor
 
           # 设置需要同步的 fork 仓库名称，用空格隔开
-          fork_repos="repo1 repo2 repo3"
+          fork_repos="OlivOS Dice"
 
           for repo in $fork_repos; do
             upstream_url=$(curl -s https://api.github.com/repos/$org_name/$repo | jq '.parent.clone_url')
