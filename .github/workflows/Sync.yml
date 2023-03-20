@@ -3,6 +3,7 @@ name: Sync Forks
 on:
   schedule:
     - cron: "0 0 * * *"
+  push:
 
 jobs:
   sync-forks:
