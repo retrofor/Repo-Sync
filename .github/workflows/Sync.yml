@@ -32,7 +32,7 @@ jobs:
           curl -H "Authorization: token $TOKEN" \
                -H "Accept: application/vnd.github.v3+json" \
                https://api.github.com/repos/$REPO_FULLNAME/forks \
-               | jq -r '.[].html_url' \
+               | jq -r '.html_url' forks.txt \
                > forks.txt
           echo "::set-output name=forks_path::forks.txt"
 
