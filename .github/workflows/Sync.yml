@@ -4,63 +4,43 @@ on:
   push:
   
   schedule:
-    - cron: '0 0 * * *' # 每天UTC时间0点执行一次
+    - cron: '0 0 * * *' # 每天UTC时间00:00自动执行
 
 jobs:
-  sync-forks:
+  sync:
     runs-on: ubuntu-latest
-    
+
     steps:
-      - name: Checkout Source Code
+      - name: Checkout code
         uses: actions/checkout@v2
-        
-      # 配置需要同步的分支和现组织名下的仓库分支
-      - name: Set Branches
-        id: set_branches
-        run: |
-          SOURCE_BRANCHES="upstream/master, upstream/newdev,upstream/main"
-          TARGET_BRANCH="main,newdev"
-          echo "::set-output name=source_branches::$SOURCE_BRANCHES"
-          echo "::set-output name=target_branch::$TARGET_BRANCH"
 
-      # 获取所有fork仓库地址
-      - name: Get Forks
-        id: get_forks
+      - name: Set up Git config
         run: |
-          TOKEN="${{ secrets.ACTION_SECRET }}"
-          REPO_FULLNAME="${{ github.repository }}"
-          curl -H "Authorization: token $TOKEN" \
-               -H "Accept: application/vnd.github.v3+json" \
-               https://api.github.com/repos/$REPO_FULLNAME/forks \
-               | jq -r '.html_url' forks.txt \
-               > forks.txt
-          echo "::set-output name=forks_path::forks.txt"
+          git config --global user.email "admin@jyunko.cn"
+          git config --global user.name "HsiangNianian"
 
-      # 遍历所有fork仓库进行同步操作
-      - name: Sync Fork Repositories
-        env:
-          GITHUB_TOKEN: ${{ secrets.ACTION_SECRET }}
+      # 自定义需要同步的原仓库分支以及现组织名下的仓库分支
+      - name: Sync forked repositories
         run: |
-          readarray -t forks < "${{ steps.get_forks.outputs.forks_path }}"
-          for fork in "${forks[@]}"
-          do 
-            repo="${fork##*/}"
-            owner="${fork%/*}"
-            git clone --depth=1 "$fork" "$repo"
-            cd "$repo"
-            
-            # 遍历所有需要同步的原仓库分支
-            IFS=',' read -ra SOURCE_BRANCHES <<< "${{ steps.set_branches.outputs.source_branches }}"
-            for SOURCE_BRANCH in "${SOURCE_BRANCHES[@]}"
+          REPOS="OlivOS-Team/OlivOS,Dice-Developer-Team/Dice" # 需要同步的仓库列表，用逗号分隔
+          BRANCHES="main:main,newdev:newdev" # 分支映射关系，用冒号分隔
+          for REPO in $(echo $REPOS | sed "s/,/ /g")
+          do
+            echo "Syncing $REPO..."
+            UPSTREAM=$(echo $REPO | awk -F/ '{print $1}')
+            FORK=$(echo $REPO | awk -F/ '{print $2}')
+            git clone https://github.com/$UPSTREAM/$FORK.git --depth 1
+            cd $FORK
+            git remote add upstream https://github.com/$UPSTREAM/$FORK.git
+            git fetch upstream
+            for PAIR in $(echo $BRANCHES | sed "s/,/ /g")
             do
-              git remote add upstream "https://github.com/user/repo.git" # 替换为需要同步的原仓库地址
-              git fetch upstream "${SOURCE_BRANCH}"
-              git checkout -b "$TARGET_BRANCH"
-              git merge --no-ff -m "Sync upstream ${owner}/${repo} branch ${SOURCE_BRANCH}" upstream/"${SOURCE_BRANCH}" --allow-unrelated-histories
-              git push origin "$TARGET_BRANCH"
+              UPSTREAM_BRANCH=$(echo $PAIR | awk -F: '{print $1}')
+              ORG_BRANCH=$(echo $PAIR | awk -F: '{print $2}')
+              git checkout $ORG_BRANCH || git checkout -b $ORG_BRANCH
+              git merge upstream/$UPSTREAM_BRANCH --allow-unrelated-histories -m "Merge upstream branch $UPSTREAM_BRANCH"
             done
-            
+            git push origin --all
             cd ..
+            rm -rf $FORK
           done
-
-          
