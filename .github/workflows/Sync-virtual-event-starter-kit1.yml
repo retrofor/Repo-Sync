@@ -14,8 +14,8 @@ jobs:
     steps:
       - uses: tgymnich/fork-sync@v1.8
         with:
-          token: ${{ secrets.PAT }}
-          owner: HsiangNianian
+          token: ${{ secrets.GITHUB_TOKEN }}  #${{ secrets.PAT }}
+#           owner: HsiangNianian
           repo: virtual-event-starter-kit1
           base: main
           head: main
