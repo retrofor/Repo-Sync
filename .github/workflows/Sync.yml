@@ -39,7 +39,7 @@ jobs:
       # 遍历所有fork仓库进行同步操作
       - name: Sync Fork Repositories
         env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GITHUB_TOKEN: ${{ secrets.ACTION_SECRET }}
         run: |
           readarray -t forks < "${{ steps.get_forks.outputs.forks_path }}"
           for fork in "${forks[@]}"
