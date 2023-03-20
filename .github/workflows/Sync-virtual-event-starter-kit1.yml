@@ -1,4 +1,4 @@
-name: Sync Forks for Dice
+name: Sync Forks for virtual-event-starter-kit1
 
 on:
   push:
@@ -12,12 +12,12 @@ jobs:
       - name: Checkout files
         uses: actions/checkout@v2
         with:
-          repository: retrofor/Dice #${{ matrix.repo }}
+          repository: retrofor/virtual-event-starter-kit1
           token: ${{ secrets.PAT }}
-      - name: Sync files with Dice!
+      - name: Sync files with virtual-event-starter-kit1!
         uses: denis-tingajkin/sync-files@main
         with:
           git-author-email: 'admin@jyunko.cn'
           git-author-name: 'HsiangNianian'
-          src-repository: Dice-Developer-Team/Dice #${{ matrix.src_repo }}
+          src-repository: HsiangNianian/virtual-event-starter-kit1
 
