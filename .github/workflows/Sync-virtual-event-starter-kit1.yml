@@ -1,23 +1,21 @@
-name: Sync Forks for virtual-event-starter-kit1
+name: Sync Fork virtual-event-starter-kit1
 
 on:
   push:
   schedule:
-    - cron: '0 0 * * *'  # 每天 UTC 时间 00:00 执行
+    - cron: '*/30 * * * *' # every 30 minutes
+  workflow_dispatch: # on button click
 
 jobs:
-  dispatch:
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout files
-        uses: actions/checkout@v2
-        with:
-          repository: retrofor/virtual-event-starter-kit1
-          token: ${{ secrets.PAT }}
-      - name: Sync files with virtual-event-starter-kit1!
-        uses: denis-tingajkin/sync-files@main
-        with:
-          git-author-email: 'admin@jyunko.cn'
-          git-author-name: 'HsiangNianian'
-          src-repository: retrofor/virtual-event-starter-kit1
+  sync:
 
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: tgymnich/fork-sync@v1.8
+        with:
+          token: ${{ secrets.PAT }}
+          owner: retrofor
+          repo: virtual-event-starter-kit1
+          base: main
+          head: main
