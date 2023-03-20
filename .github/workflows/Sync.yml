@@ -1,0 +1,34 @@
+name: Sync with Upstream
+
+on:
+  schedule:
+    - cron: "0 0 * * *"
+
+jobs:
+  sync-with-upstream:
+    runs-on: ubuntu-latest
+
+    strategy:
+      matrix:
+        upstream_repo:
+          - OlivOS-Team/OlivOS
+          - Dice-Developer-Team/Dice
+
+    steps:
+      - name: Checkout source code
+        uses: actions/checkout@v2
+
+      - name: Prepare remotes
+        run: |
+          git remote add upstream https://github.com/${{ matrix.upstream_repo }}.git
+          git fetch upstream
+
+      - name: Merge upstream changes
+        run: |
+          git checkout master
+          git merge --no-edit upstream/master
+
+      - name: Push changes to fork
+        uses: ad-m/github-push-action@master
+        with:
+          github_token: ${{ secrets.ACTION_SECRET }}
