@@ -2,53 +2,44 @@ name: Sync Forks
 
 on:
   schedule:
-    - cron: "0 0 * * *"
+    - cron: '0 0 * * *'  # 每天 UTC 时间 00:00 执行
+    
   push:
 
 jobs:
-  sync-forks:
+  sync:
     runs-on: ubuntu-latest
-    
     steps:
-    - name: Checkout
-      uses: actions/checkout@v2
-      with:
-        fetch-depth: 0  # 最近所有历史记录都被拉取，包括所有 tags
-        ref: ${{ github.event.pull_request.head.sha }}
-    
-    - name: Configure Git
-      run: |
-        git config --global user.name "HsiangNiania"
-        git config --global user.email "HsiangNianian@outlook.com"
-        git config --global pull.rebase true
-    
-    - name: Sync forks
-      run: |
-        ORGANIZATION_NAME=retrofor # Replace with your organization name
-        REPO_BRANCHES=(OlivOS-Team/main upstream/newdev) # Replace with the branches you want to sync
-        for REPO_NAME in $(curl -s https://api.github.com/orgs/$ORGANIZATION_NAME/repos | jq -r '.[].name'); do
-          if [[ $REPO_NAME != "$GITHUB_REPOSITORY_NAME" ]]; then
-            git clone https://github.com/$ORGANIZATION_NAME/$REPO_NAME.git
-            cd $REPO_NAME
-            git remote add upstream https://github.com/$(echo $REPO_NAME | sed 's/-/_/')/$(echo $REPO_NAME | sed 's/-/./').git
+      - name: Checkout
+        uses: actions/checkout@v2
+
+      - name: Set up Git user
+        run: |
+          git config --global user.name "HsiangNianian"
+          git config --global user.email "HsiangNianian@outlook.com"
+
+      - name: Sync Forks
+        env:
+          GITHUB_TOKEN: ${{ secrets.ACTION_SECRET }}
+        run: |
+          org_name=<your-org-name>
+
+          # 设置需要同步的 fork 仓库名称，用空格隔开
+          fork_repos="repo1 repo2 repo3"
+
+          for repo in $fork_repos; do
+            upstream_url=$(curl -s https://api.github.com/repos/$org_name/$repo | jq '.parent.clone_url')
+            git clone --depth=1 $upstream_url /tmp/$repo
+            cd /tmp/$repo
+            git remote add upstream $upstream_url
             git fetch upstream
-            for BRANCH in "${REPO_BRANCHES[@]}"; do
-              git checkout $BRANCH
-              git merge upstream/$BRANCH --no-edit
+
+            for branch in $(git branch -r | grep upstream); do
+              local_branch=${branch#upstream/}
+              git checkout $local_branch || git checkout -b $local_branch
+              git merge --no-edit $branch
+              git push origin $local_branch
             done
-            git push origin $REPO_BRANCHES[0]
-            cd ..
-            rm -rf $REPO_NAME
-          fi
-        done
-    
-    - name: Create issue if sync failed
-      if: always()
-      run: |
-        if [ $? -ne 0 ]; then
-          curl -X POST \
-            -H "Accept: application/vnd.github.v3+json" \
-            -H "Authorization: token ${{ secrets.GITHUB_TOKEN }}" \
-            https://api.github.com/repos/${{ github.repository }}/issues \
-            -d "{\"title\":\"Repository sync status\",\"body\":\"There was an error syncing the repositories.\"}"
-        fi
+
+            cd -
+          done
