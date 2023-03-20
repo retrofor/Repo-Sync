@@ -18,7 +18,7 @@ jobs:
         run: |
           git config --global user.email "admin@jyunko.cn"
           git config --global user.name "HsiangNianian"
-
+          git config --global pull.rebase true
       # 自定义需要同步的原仓库分支以及现组织名下的仓库分支
       - name: Sync forked repositories
         run: |
