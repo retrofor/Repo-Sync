@@ -16,7 +16,7 @@ jobs:
       - name: Set up Git user
         run: |
           git config --global user.name "HsiangNianian"
-          git config --global user.email "HsiangNianian@outlook.com"
+          git config --global user.email "admin@jyunko.cn"
 
       - name: Sync Forks
         env:
