@@ -33,8 +33,8 @@ jobs:
             upstream_url=$(curl -s https://api.github.com/repos/$org_name/$repo | jq -r '.parent.clone_url')
             git clone --depth=1 $upstream_url /tmp/$repo
             cd /tmp/$repo
-            git remote add upstream $upstream_url
-            git fetch upstream
+            git remote add $repo $upstream_url
+            git fetch $repo
 
             for branch in $(git branch -r | grep upstream); do
               local_branch=${branch#upstream/}
@@ -44,7 +44,7 @@ jobs:
 
               # 定义Issue标题和内容
               issue_title="Sync Status for $org_name/$repo"
-              issue_body=""
+              issue_body="笨蛋，又改错了，，，"
 
               # 同步过程中发生错误时捕获错误并记录同步失败信息
               if [ $? -ne 0 ]; then
