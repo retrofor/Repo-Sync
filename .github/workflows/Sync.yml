@@ -22,9 +22,11 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.ACTION_SECRET }}
         run: |
-          org_name=retrofor
+          #!/usr/bin/env bash
 
-          # 设置需要同步的 fork 仓库名称，用空格隔开
+          set -e
+
+          org_name=retrofor
           fork_repos="OlivOS Dice"
 
           for repo in $fork_repos; do
@@ -38,8 +40,29 @@ jobs:
               local_branch=${branch#upstream/}
               git checkout $local_branch || git checkout -b $local_branch
               git merge --no-edit $branch
-              git push origin $local_branch
+              git push origin $local_branch || true
+
+              # 定义Issue标题和内容
+              issue_title="Sync Status for $org_name/$repo"
+              issue_body=""
+
+              # 同步过程中发生错误时捕获错误并记录同步失败信息
+              if [ $? -ne 0 ]; then
+                issue_body+="Failed to sync $branch\n"
+              else
+                issue_body+="Successfully synced $branch\n"
+              fi
+
+              # 在指定的仓库中创建Issue
+              curl --location --request POST "https://api.github.com/repos/$org_name/$repo/issues" \
+              --header "Authorization: Bearer $GITHUB_TOKEN" \
+              --header "Content-Type: application/json" \
+              --data-raw "{
+                  \"title\": \"$issue_title\",
+                  \"body\": \"$issue_body\"
+              }"
             done
 
             cd -
           done
+
