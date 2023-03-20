@@ -15,7 +15,7 @@ jobs:
       - uses: tgymnich/fork-sync@v1.8
         with:
           token: ${{ secrets.PAT }}
-          owner: retrofor
+          owner: HsiangNianian
           repo: virtual-event-starter-kit1
           base: main
           head: main
