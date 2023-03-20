@@ -17,4 +17,4 @@ jobs:
         with:
           token: ${{ secrets.PAT }}
           repository: ${{ matrix.repo }}
-          event-type: synchronize
+          event-type: sync-repo #synchronize
