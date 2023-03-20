@@ -10,8 +10,11 @@ jobs:
     runs-on: ubuntu-latest
     
     steps:
-    - name: Checkout code
+    - name: Checkout
       uses: actions/checkout@v2
+      with:
+        fetch-depth: 0  # 最近所有历史记录都被拉取，包括所有 tags
+        ref: ${{ github.event.pull_request.head.sha }}
     
     - name: Configure Git
       run: |
