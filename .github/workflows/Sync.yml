@@ -12,8 +12,8 @@ jobs:
     strategy:
       matrix:
         upstream_repo:
-          - OlivOS-Team/OlivOS
-          - Dice-Developer-Team/Dice
+          - OlivOS-Team/OlivOS/tree/main
+          - Dice-Developer-Team/Dice/tree/newdev
 
     steps:
       - name: Checkout source code
