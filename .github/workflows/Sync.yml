@@ -1,35 +1,66 @@
-name: Sync with Upstream
+name: Sync Forks
 
 on:
-  schedule:
-    - cron: "0 0 * * *"
   push:
   
+  schedule:
+    - cron: '0 0 * * *' # 每天UTC时间0点执行一次
+
 jobs:
-  sync-with-upstream:
+  sync-forks:
     runs-on: ubuntu-latest
-
-    strategy:
-      matrix:
-        upstream_repo:
-          - OlivOS-Team/OlivOS
-          - Dice-Developer-Team/Dice
-
+    
     steps:
-      - name: Checkout source code
+      - name: Checkout Source Code
         uses: actions/checkout@v2
-
-      - name: Prepare remotes
+        
+      # 配置需要同步的分支和现组织名下的仓库分支
+      - name: Set Branches
+        id: set_branches
         run: |
-          git remote add upstream https://github.com/${{ matrix.upstream_repo }}.git
-          git fetch upstream
+          SOURCE_BRANCHES="upstream/master, upstream/newdev,upstream/main"
+          TARGET_BRANCH="main,newdev"
+          echo "::set-output name=source_branches::$SOURCE_BRANCHES"
+          echo "::set-output name=target_branch::$TARGET_BRANCH"
 
-      - name: Merge upstream changes
+      # 获取所有fork仓库地址
+      - name: Get Forks
+        id: get_forks
         run: |
-          git checkout master
-          git merge --no-edit upstream/master
+          TOKEN="${{ secrets.ACTION_SECRET }}"
+          REPO_FULLNAME="${{ github.repository }}"
+          curl -H "Authorization: token $TOKEN" \
+               -H "Accept: application/vnd.github.v3+json" \
+               https://api.github.com/repos/$REPO_FULLNAME/forks \
+               | jq -r '.[].html_url' \
+               > forks.txt
+          echo "::set-output name=forks_path::forks.txt"
 
-      - name: Push changes to fork
-        uses: ad-m/github-push-action@master
-        with:
-          github_token: ${{ secrets.ACTION_SECRET }}
+      # 遍历所有fork仓库进行同步操作
+      - name: Sync Fork Repositories
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          readarray -t forks < "${{ steps.get_forks.outputs.forks_path }}"
+          for fork in "${forks[@]}"
+          do 
+            repo="${fork##*/}"
+            owner="${fork%/*}"
+            git clone --depth=1 "$fork" "$repo"
+            cd "$repo"
+            
+            # 遍历所有需要同步的原仓库分支
+            IFS=',' read -ra SOURCE_BRANCHES <<< "${{ steps.set_branches.outputs.source_branches }}"
+            for SOURCE_BRANCH in "${SOURCE_BRANCHES[@]}"
+            do
+              git remote add upstream "https://github.com/user/repo.git" # 替换为需要同步的原仓库地址
+              git fetch upstream "${SOURCE_BRANCH}"
+              git checkout -b "$TARGET_BRANCH"
+              git merge --no-ff -m "Sync upstream ${owner}/${repo} branch ${SOURCE_BRANCH}" upstream/"${SOURCE_BRANCH}" --allow-unrelated-histories
+              git push origin "$TARGET_BRANCH"
+            done
+            
+            cd ..
+          done
+
+          
