@@ -20,7 +20,7 @@ jobs:
 
       - name: Sync Forks
         env:
-          ACTION_SECRET: ${{ secrets.ACTION_SECRET }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           #!/usr/bin/env bash
 
@@ -55,7 +55,7 @@ jobs:
 
               # 在指定的仓库中创建Issue
               curl --location --request POST "https://api.github.com/repos/$org_name/$repo/issues" \
-              --header "Authorization: Bearer $ACTION_SECRET" \
+              --header "Authorization: Bearer $GITHUB_TOKEN" \
               --header "Content-Type: application/json" \
               --data-raw "{
                   \"title\": \"$issue_title\",
