@@ -1,31 +1,20 @@
 name: Sync Forks
 
 on:
+  push:
   schedule:
     - cron: '0 0 * * *'  # 每天 UTC 时间 00:00 执行
-    
-  push:
 
 jobs:
-  sync:
+  dispatch:
+    strategy:
+      matrix:
+        repo: ['retrofor/Dice', 'retrofor/OlivOS', 'retrofor/virtual-event-starter-kit1']
     runs-on: ubuntu-latest
-    
     steps:
-    - name: OlivOS
-      uses: peter-evans/repository-dispatch@v1
-      with:
-        token: ${{ secrets.PAT }}
-        repository: retrofor/OlivOS
-        event-type: sync
-    - name: Dice
-      uses: peter-evans/repository-dispatch@v1
-      with:
-        token: ${{ secrets.PAT }}
-        repository: retrofor/Dice
-        event-type: sync
-    - name: virtual-event-starter-kit1
-      uses: peter-evans/repository-dispatch@v1
-      with:
-        token: ${{ secrets.PAT }}
-        repository: retrofor/virtual-event-starter-kit1
-        event-type: sync
+      - name: Repository Dispatch
+        uses: peter-evans/repository-dispatch@v2
+        with:
+          token: ${{ secrets.PAT }}
+          repository: ${{ matrix.repo }}
+          event-type: sync
