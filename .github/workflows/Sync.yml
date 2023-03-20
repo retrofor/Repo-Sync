@@ -28,13 +28,13 @@ jobs:
 
           org_name=retrofor
           fork_repos="OlivOS Dice virtual-event-starter-kit1"
-
+          upstream=$repo
           for repo in $fork_repos; do
             upstream_url=$(curl -s https://api.github.com/repos/$org_name/$repo | jq -r '.parent.clone_url')
-            git clone --depth=1 $upstream_url /tmp/$repo
-            cd /tmp/$repo
+            git clone --depth=1 $upstream_url /tmp/upstream
+            cd /tmp/upstream
             git remote add $repo $upstream_url
-            git fetch $repo
+            git fetch upstream
 
             for branch in $(git branch -r | grep upstream); do
               local_branch=${branch#upstream/}
