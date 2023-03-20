@@ -27,7 +27,7 @@ jobs:
           set -e
 
           org_name=retrofor
-          fork_repos="OlivOS Dice"
+          fork_repos="OlivOS Dice virtual-event-starter-kit1"
 
           for repo in $fork_repos; do
             upstream_url=$(curl -s https://api.github.com/repos/$org_name/$repo | jq -r '.parent.clone_url')
