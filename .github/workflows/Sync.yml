@@ -10,11 +10,17 @@ jobs:
     strategy:
       matrix:
         repo: ['retrofor/Dice', 'retrofor/OlivOS', 'retrofor/virtual-event-starter-kit1']
+        src_repo: ['Dice-Developer-Team/Dice', 'OlivOS-Team/OlivOS', 'HsiangNianian/virtual-event-starter-kit1']
     runs-on: ubuntu-latest
     steps:
-      - name: Repository Dispatch
-        uses: peter-evans/repository-dispatch@v2
+      - name: Checkout files
+        uses: actions/checkout@v2
         with:
-          token: ${{ secrets.PAT }}
           repository: ${{ matrix.repo }}
-          event-type: sync-fork #synchronize
+          token: ${{ secrets.PAT }}
+      - name: Sync files with dst-octocat-repsotiory!
+        uses: denis-tingajkin/sync-files@main
+        with:
+          git-author-email: 'octocat@github.com'
+          git-author-name: 'Octocat'
+          src-repository: ${{ matrix.src_repo }}
