@@ -1,0 +1,51 @@
+name: Sync Fork 
+
+on:
+  push:
+  schedule:
+    - cron: '*/30 * * * *' # every 30 minutes
+  workflow_dispatch: # on button click
+  
+jobs:
+  virtual-event-starter-kit1:
+    runs-on: ubuntu-latest
+    steps:
+      - name: virtual-event-starter-kit1
+      - uses: TobKed/github-forks-sync-action@master
+        with:
+          github_token: ${{ secrets.PAT }}
+          upstream_repository: HsiangNianian/virtual-event-starter-kit1
+          target_repository: retrofor/virtual-event-starter-kit1
+          upstream_branch: main
+          target_branch: main
+          force: true
+          tags: true
+          
+  OlivOS:
+    runs-on: ubuntu-latest
+    steps:
+      - name: virtual-event-starter-kit1
+      - uses: TobKed/github-forks-sync-action@master
+        with:
+          github_token: ${{ secrets.PAT }}
+          upstream_repository: OlivOS-Team/OlivOS
+          target_repository: retrofor/OlivOS
+          upstream_branch: main
+          target_branch: main
+          force: true
+          tags: true
+          
+  Dice:
+      runs-on: ubuntu-latest
+      steps:
+        - name: virtual-event-starter-kit1
+        - uses: TobKed/github-forks-sync-action@master
+          with:
+            github_token: ${{ secrets.PAT }}
+            upstream_repository: Dice-Developer-Team/Dice
+            target_repository: retrofor/Dice
+            upstream_branch: main
+            target_branch: main
+            force: true
+            tags: true
+
