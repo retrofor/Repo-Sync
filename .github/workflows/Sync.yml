@@ -36,8 +36,8 @@ jobs:
           github_token: ${{ secrets.PAT }}
           upstream_repository: Dice-Developer-Team/Dice
           target_repository: retrofor/Dice
-          upstream_branch: main
-          target_branch: main
+          upstream_branch: newdev
+          target_branch: newdev
           force: true
           tags: true
 
