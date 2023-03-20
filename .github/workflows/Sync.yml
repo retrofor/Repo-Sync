@@ -22,7 +22,8 @@ jobs:
         env:
           PAT: ${{ secrets.PAT }}
         run: |
-          #!/usr/bin/env bash
+          git config --global user.name "HsiangNianian"
+          git config --global user.email "admin@jyunko.cn"
 
           set -e
 
