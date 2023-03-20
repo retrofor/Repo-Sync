@@ -16,11 +16,11 @@ jobs:
       - name: Checkout files
         uses: actions/checkout@v2
         with:
-          repository: ${{ matrix.src_repo }}
+          repository: ${{ matrix.repo }}
           token: ${{ secrets.PAT }}
       - name: Sync files with dst-octocat-repsotiory!
         uses: denis-tingajkin/sync-files@main
         with:
           git-author-email: 'octocat@github.com'
           git-author-name: 'Octocat'
-          src-repository: ${{ matrix.repo }}
+          src-repository: ${{ matrix.src_repo }}
