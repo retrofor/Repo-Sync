@@ -49,19 +49,17 @@ jobs:
               # 同步过程中发生错误时捕获错误并记录同步失败信息
               if [ $? -ne 0 ]; then
                 issue_body+="Failed to sync $branch\n"
-              else
-                issue_body+="Successfully synced $branch\n"
+                # 在指定的仓库中创建Issue
+                curl --location --request POST "https://api.github.com/repos/$org_name/$repo/issues" \
+                --header "Authorization: Bearer $PAT" \
+                --header "Content-Type: application/json" \
+                --data-raw "{
+                    \"title\": \"$issue_title\",
+                    \"body\": \"$issue_body\"
+                }"
+                
               fi
-
-              # 在指定的仓库中创建Issue
-              curl --location --request POST "https://api.github.com/repos/$org_name/$repo/issues" \
-              --header "Authorization: Bearer $PAT" \
-              --header "Content-Type: application/json" \
-              --data-raw "{
-                  \"title\": \"$issue_title\",
-                  \"body\": \"$issue_body\"
-              }"
             done
-
+            
             cd -
           done
